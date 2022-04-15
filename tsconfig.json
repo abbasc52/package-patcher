@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "outDir": "dist",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "module": "esnext"
+    },
+    "include": [
+        "src/"
+    ]
+}
