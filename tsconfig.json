@@ -3,6 +3,7 @@
         "target": "es2017",
         "outDir": "dist",
         "allowSyntheticDefaultImports": true,
+        "allowJs": true,
         "moduleResolution": "node",
         "module": "esnext"
     },

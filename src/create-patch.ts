@@ -14,7 +14,7 @@ async function getPkgTarUrl(packageName:string, version:string){
     return result.dist.tarball;
 }
 
-function generatePatch(packageName:string,packageVersion:string,url:string,packagePath:string){
+function generatePatch({ packageName, packageVersion, url, packagePath, patchDirectory }: { packageName: string; packageVersion: string; url: string; packagePath: string; patchDirectory: string; }){
 
     let localFiles:string[] = glob.sync(`${packagePath}/**/*`,{
         nodir:true,
@@ -22,7 +22,7 @@ function generatePatch(packageName:string,packageVersion:string,url:string,packa
         `${packagePath}/node_modules/**/*`
     ]}).map((c:string) => path.normalize(path.relative(packagePath,c)));
     return new Promise(function(resolve, reject){
-        const writeFilePath = `./patches/${packageName}+${packageVersion}.patch`;
+        const writeFilePath = `${patchDirectory}/${packageName}+${packageVersion}.patch`;
         fs.mkdirp(path.dirname(writeFilePath));
         const writeStream = fs.createWriteStream(writeFilePath,{ encoding: 'utf-8'});
         const nullPath = path.normalize('/dev/null');
@@ -68,14 +68,14 @@ function generatePatch(packageName:string,packageVersion:string,url:string,packa
     });
 }
 
-export async function createPatch(packageName){
+export async function createPatch(packageName:string, patchDirectory:string){
     console.log(packageName);
     const packagePath = path.posix.join(getPackageParentDir(packageName),packageName);
     console.log(`Found package at ${packagePath}`);
     const packageInfo = await fs.readJSON(path.resolve(packagePath, 'package.json'));
     const packageVersion = packageInfo.version;
     const url = await getPkgTarUrl(packageName,packageVersion);
-    await generatePatch(packageName,packageVersion,url, packagePath);
+    await generatePatch({ packageName, packageVersion, url, packagePath, patchDirectory });
 }
 
 
@@ -115,5 +115,3 @@ function getPatchForFile({fileName,data,packageName,packagePath,localFiles}:Pack
         return patch;
     }
 }
-
-await createPatch('glob')

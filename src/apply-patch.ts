@@ -4,22 +4,23 @@ import fs from 'fs-extra';
 import path from 'path';
 import glob from 'glob';
 
-
-
-
-/**
- * 
- * @param {string} dirname 
- */
 export function applyPatches(pattern = './patches/**/*.patch'){
-    glob(pattern,async(err, matches)=>{
+    return new Promise((resolve,reject) => {
+      glob(pattern,async(err, matches)=>{
         if(err != null){
-            throw `Failed to find patches - ${err}`;
+            reject(`Failed to find patches - ${err}`)
+        }
+        if(matches.length == 0){
+          console.warn(`no files found for pattern ${pattern}`)
         }
         for(let match of matches){
             await applyPatch(match);
+            console.log(`applied patch - ${match}`);
         }
-    });
+        resolve({});
+      });
+    })
+    
 }
 
 /**
@@ -77,11 +78,4 @@ export async function applyPatch(patchFilePath){
         })
     })
     
-}
-
-try{
-    await applyPatches();
-}
-catch(err){
-    console.error(err);
 }
