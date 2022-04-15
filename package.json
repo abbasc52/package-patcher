@@ -12,7 +12,6 @@
   "author": "Abbas Cyclewala",
   "license": "MIT",
   "dependencies": {
-    "@types/yargs": "^17.0.10",
     "diff": "^5.0.0",
     "fs-extra": "^10.0.1",
     "glob": "^7.2.0",
@@ -22,6 +21,7 @@
     "zlib": "^1.0.5"
   },
   "devDependencies": {
+    "@types/yargs": "^17.0.10",
     "@types/diff": "^5.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.2.0",
