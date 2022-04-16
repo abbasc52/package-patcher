@@ -1,7 +1,7 @@
 import * as diff from 'diff';
 import { getPackageNameFromPatchFile,getPackageParentDir } from './utils.js';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'upath';
 import glob from 'glob';
 
 export function applyPatches(pattern = './patches/**/*.patch'){
@@ -29,7 +29,7 @@ export function applyPatches(pattern = './patches/**/*.patch'){
  */
 export async function applyPatch(patchFilePath){
     const packageName = getPackageNameFromPatchFile('./patches',patchFilePath);
-    const packageParentDir = getPackageParentDir(packageName);
+    const packageParentDir = await getPackageParentDir(packageName);
     const patch = await fs.readFile(patchFilePath,{ encoding:'utf-8'});
     return new Promise((resolve,reject) => {
         diff.applyPatches(patch,{
@@ -44,7 +44,7 @@ export async function applyPatch(patchFilePath){
                     cb(null,'');
                 }
                 else{
-                    const filePath = path.posix.join(packageParentDir,file);
+                    const filePath = path.join(packageParentDir,file);
                     fs.readFile(filePath,'utf-8',cb);
                 }
 

@@ -1,5 +1,5 @@
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'upath';
 import { getPackageParentDir } from './utils.js';
 import * as diff from 'diff';
 import tar from 'tar-stream';
@@ -20,7 +20,7 @@ function generatePatch({ packageName, packageVersion, url, packagePath, patchDir
         nodir:true,
         ignore:[
         `${packagePath}/node_modules/**/*`
-    ]}).map((c:string) => path.normalize(path.relative(packagePath,c)));
+    ]}).map((c:string) => path.relative(packagePath,c));
     return new Promise(function(resolve, reject){
         const writeFilePath = `${patchDirectory}/${packageName}+${packageVersion}.patch`;
         fs.mkdirp(path.dirname(writeFilePath));
@@ -70,7 +70,7 @@ function generatePatch({ packageName, packageVersion, url, packagePath, patchDir
 
 export async function createPatch(packageName:string, patchDirectory:string){
     console.log(packageName);
-    const packagePath = path.posix.join(getPackageParentDir(packageName),packageName);
+    const packagePath = path.join(await getPackageParentDir(packageName),packageName);
     console.log(`Found package at ${packagePath}`);
     const packageInfo = await fs.readJSON(path.resolve(packagePath, 'package.json'));
     const packageVersion = packageInfo.version;
@@ -93,13 +93,13 @@ type PackageFile = {
 
 function getPatchForFile({fileName,data,packageName,packagePath,localFiles}:PackageFile){
     const downloadedFile = data;
-    const relativeFilePath = path.posix.relative('package',fileName);
+    const relativeFilePath = path.relative('package',fileName);
     const fileIdx = localFiles.indexOf(relativeFilePath)
 
-    const diffPath = path.posix.join(packageName,relativeFilePath);
-    const nullPath = path.posix.normalize('/dev/null');
+    const diffPath = path.join(packageName,relativeFilePath);
+    const nullPath = path.normalize('/dev/null');
 
-    if(localFiles.findIndex(c => relativeFilePath == path.posix.normalize(c)) != -1){
+    if(localFiles.findIndex(c => relativeFilePath == path.normalize(c)) != -1){
         const packageFilePath = path.resolve(packagePath,relativeFilePath);
 
         const packageFile = fs.readFileSync(packageFilePath,{encoding:'utf-8'});
