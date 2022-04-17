@@ -2,6 +2,9 @@
   "name": "package-patcher",
   "version": "0.0.2",
   "description": "a simple cli tool to patch node_modules using jsdiff and node resolve",
+  "repository": {
+    "url": "https://github.com/abbasc52/package-patcher"
+  },
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
